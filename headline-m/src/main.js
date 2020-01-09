@@ -7,6 +7,8 @@ import 'amfe-flexible'
 // 加载注册vant组件模块
 import './utils/register-vant'
 import './styles/index.less'
+// 表单验证
+import './utils/validation.js'
 
 Vue.config.productionTip = false
 
