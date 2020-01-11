@@ -16,3 +16,14 @@ export const getUserInfo = () => request({
   method: 'GET',
   url: `/app/v1_0/user`
 })
+
+export const getUserById = userId => request({
+  method: 'GET',
+  url: `/app/v1_0/users/${userId}`
+})
+
+export const getArticlesByUser = (userId, params) => request({
+  method: 'GET',
+  url: `/app/v1_0/users/${userId}/articles`,
+  params
+})

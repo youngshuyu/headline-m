@@ -29,6 +29,10 @@ const routes = [
         component: () => import('@/views/my')
       }
     ]
+  },
+  {
+    path: '/user/:userID',
+    component: () => import('@/views/user')
   }
   // route level code-splitting
   // this generates a separate chunk (about.[hash].js) for this route
