@@ -8,6 +8,27 @@ const routes = [
   {
     path: '/login',
     component: Login
+  },
+  {
+    path: '/',
+    component: () => import ('@/views/tab-bar'),
+    children: [
+      {
+        path: '', // 首页
+        component: () => import('@/views/home')
+      },
+      {
+        path: 'qa', // 问答
+        component: () => import('@/views/Q&A')
+      },
+      {
+        path: 'video', // 视频
+        component: () => import('@/views/video')
+      }, {
+        path: 'my', // 我的主页
+        component: () => import('@/views/my')
+      }
+    ]
   }
   // route level code-splitting
   // this generates a separate chunk (about.[hash].js) for this route
