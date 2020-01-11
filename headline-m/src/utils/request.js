@@ -24,7 +24,7 @@ request.interceptors.request.use(
     // 数据值后端要求提供：Bearer token数据
     //    注意：Bearer 后面有个空格
     if (user) {
-      config.headers.Authorization = `Bearer ${user}`
+      config.headers.Authorization = `Bearer ${user.token}`
     }
     return config
   },

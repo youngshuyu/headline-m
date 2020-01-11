@@ -7,7 +7,12 @@ export const login = data => request({
 })
 
 export const getMsgCode = data => request({
-  method: 'Get',
+  method: 'GETt',
   url: `/app/v1_0/sms/codes/${data}`,
   data
+})
+
+export const getUserInfo = () => request({
+  method: 'GET',
+  url: `/app/v1_0/user`
 })
