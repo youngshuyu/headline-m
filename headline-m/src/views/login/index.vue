@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <van-nav-bar title="登录" />
+    <van-nav-bar title="登录" fixed/>
     <ValidationObserver ref="form">
       <van-cell-group>
         <ValidationProvider name="手机号" rules="required|mobile" immediate v-slot="{ errors }">
@@ -116,6 +116,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.login {
+  padding-top: 45px;
+}
 .van-cell {
   height: 45px;
   align-items: center;
