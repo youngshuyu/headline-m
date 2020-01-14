@@ -54,6 +54,7 @@ export default {
       } else {
         // 没有数据了，把 finished 设置为 true，不再加载更多
         this.finished = true
+        this.$toast('没有数据了')
       }
     },
     async onRefresh () {

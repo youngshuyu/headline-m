@@ -14,3 +14,8 @@ export const getArticlesByChannel = params => request({
   url: `/app/v1_1/articles`,
   params
 })
+
+export const getAllChannels = () => request({
+  method: 'GET',
+  url: '/app/v1_0/channels'
+})
