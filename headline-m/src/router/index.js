@@ -37,6 +37,10 @@ const routes = [
   {
     path: '/search',
     component: () => import('@/views/search')
+  }, {
+    path: '/article/:articleId',
+    component: () => import('@/views/article'),
+    props: true // 将动态路由参数映射到组件的props中
   }
   // route level code-splitting
   // this generates a separate chunk (about.[hash].js) for this route

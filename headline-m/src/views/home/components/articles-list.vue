@@ -11,6 +11,7 @@
     v-for="(item,index) in list"
     :key="index"
     :title="item.title"
+    @click="$router.push(`/article/${item.art_id}`)"
   />
 </van-list>
 </van-pull-refresh>
@@ -20,6 +21,7 @@
 <script>
 import { getArticlesByChannel } from '@/api/channel'
 export default {
+  name: 'articles-list',
   data () {
     return {
       list: [],
