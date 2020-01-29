@@ -36,7 +36,13 @@
             <p class="time">{{articleContent.pubdate}}</p>
           </div>
         </div>
-        <van-button class="follow-btn" type="info" size="small" round>+ 关注</van-button>
+        <!-- 用户不能关注自己 -->
+        <van-button class="follow-btn"
+        :type="articleContent.is_followed ? 'dafault': 'info'"
+        size="small"
+        round
+        v-if="!user || articleContent.aut_id !== user.id"
+        @click="onFollow">{{articleContent.is_followed ? '已关注':'+ 关注'}}</van-button>
       </div>
       <div class="markdown-body" v-html="articleContent.content"></div>
     </div>
@@ -68,12 +74,14 @@
         info="9"
       />
       <van-icon
-        color="orange"
+        :color="articleContent.is_collected ? 'orange':'grey' "
         name="star"
+        @click="onCollect"
       />
       <van-icon
-        color="#e5645f"
+        :color="articleContent.attitude > 0 ? '#e5645f' : 'grey'"
         name="good-job"
+        @click="onLike"
       />
       <van-icon class="share-icon" name="share" />
     </div>
@@ -82,7 +90,8 @@
 </template>
 
 <script>
-import { getArticleByArticleId } from '@/api/article.js'
+import { getArticleByArticleId, addCollect, deleteCollect, addLike, deleteLike, addFollow, deleteFollow } from '@/api/article.js'
+import { mapState } from 'vuex'
 export default {
   name: 'ArticlePage',
   components: {},
@@ -96,11 +105,13 @@ export default {
     return {
       articleContent: {},
       loading: false,
-      netError: false
+      netError: false,
+      isCollect: false
     }
   },
-  computed: {},
-  watch: {},
+  computed: {
+    ...mapState(['user'])
+  },
   created () {
     this.loadData()
   },
@@ -112,11 +123,77 @@ export default {
         let { data } = await getArticleByArticleId(this.articleId)
         console.log(data)
         this.articleContent = data.data
+        console.log(data.data)
       } catch (error) {
         console.log(error)
         this.netError = true
       }
       this.loading = false
+    },
+    async onCollect () {
+      // 为收藏时发送收藏的请求
+      // 这里 loading 不仅仅是为了交互提示，更重要的是请求期间禁用背景点击功能，防止用户不断的操作界面发出请求
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '操作中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      try {
+        if (!this.articleContent.is_collected) {
+          await addCollect(this.articleId)
+          this.articleContent.is_collected = true
+          this.$toast.success('收藏成功')
+        } else {
+          await deleteCollect(this.articleId)
+          this.articleContent.is_collected = false
+          this.$toast.success('取消收藏')
+        }
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('操作失败')
+      }
+    },
+    async onLike () {
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '操作中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      try {
+        if (this.articleContent.attitude === -1) {
+          await addLike(this.articleId)
+          this.articleContent.attitude = 1
+          this.$toast.success('点赞成功')
+        } else {
+          await deleteLike(this.articleId)
+          this.articleContent.attitude = -1
+          this.$toast.success('取消点赞')
+        }
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('操作失败')
+      }
+    },
+    async onFollow () {
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '操作中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      try {
+        let authorId = this.articleContent.aut_id
+        if (!this.articleContent.is_followed) {
+          await addFollow(authorId)
+          this.$toast.success('关注成功')
+        } else {
+          await deleteFollow(authorId)
+          this.$toast.success('取消关注')
+        }
+        this.articleContent.is_followed = !this.articleContent.is_followed
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('操作失败')
+      }
     }
   }
 }
