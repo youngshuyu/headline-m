@@ -33,7 +33,7 @@
           />
           <div class="text">
             <p class="name">{{articleContent.aut_name}}</p>
-            <p class="time">{{articleContent.pubdate}}</p>
+            <p class="time">{{articleContent.pubdate | relativeTime}}</p>
           </div>
         </div>
         <!-- 用户不能关注自己 -->

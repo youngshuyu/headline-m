@@ -10,6 +10,9 @@ import './styles/index.less'
 // 表单验证
 import './utils/validation.js'
 
+// 引入日期格式化模块
+import './utils/datetime'
+
 Vue.config.productionTip = false
 
 new Vue({
