@@ -37,6 +37,7 @@ import channelsEdit from './components/channel-edit'
 import { getItem, setItem } from '@/utils/storage'
 
 export default {
+  name: 'HomePage',
   data () {
     return {
       active: 0,

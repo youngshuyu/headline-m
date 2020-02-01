@@ -59,7 +59,9 @@
       >点击重试</van-button>
     </div>
     <!-- /加载失败提示 -->
-
+    <!-- 文章评论 -->
+    <article-comment :articleId="articleId"/>
+    <!-- /文章评论 -->
     <!-- 底部区域 -->
     <div class="footer">
       <van-button
@@ -92,9 +94,10 @@
 <script>
 import { getArticleByArticleId, addCollect, deleteCollect, addLike, deleteLike, addFollow, deleteFollow } from '@/api/article.js'
 import { mapState } from 'vuex'
+import ArticleComment from './components/article_comment'
 export default {
   name: 'ArticlePage',
-  components: {},
+  components: { ArticleComment },
   props: {
     articleId: {
       type: String,
@@ -121,9 +124,7 @@ export default {
       try {
         this.loading = true
         let { data } = await getArticleByArticleId(this.articleId)
-        console.log(data)
         this.articleContent = data.data
-        console.log(data.data)
       } catch (error) {
         console.log(error)
         this.netError = true
