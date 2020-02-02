@@ -27,3 +27,9 @@ export const getArticlesByUser = (userId, params) => request({
   url: `/app/v1_0/users/${userId}/articles`,
   params
 })
+
+// 获取用户资料
+export const getUserProfile = () => request({
+  method: 'GET',
+  url: '/app/v1_0/user/profile'
+})
