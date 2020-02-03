@@ -5,7 +5,7 @@
       <van-cell title="头像" @click="onAvatarChoose">
         <van-image round width="30" height="30" :src="user.photo" />
       </van-cell>
-      <van-cell title="昵称" :value="user.name" />
+      <van-cell title="昵称" :value="user.name" @click="isEditNameShow = true"/>
       <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" />
       <van-cell title="生日" :value="user.birthday" />
     </van-cell-group>
@@ -22,19 +22,42 @@
       />
     </van-image-preview>
     <!-- /图片预览 -->
+    <!-- 昵称编辑弹出层 -->
+    <van-popup v-model="isEditNameShow" position="bottom">
+      <van-nav-bar
+        title="编辑昵称"
+        left-text="取消"
+        right-text="确定"
+        @click-left="isEditNameShow = false"
+        @click-right="onUpdateName"
+      />
+      <van-field
+          :value="user.name"
+          @input="inputName = $event"
+          rows="2"
+          autosize
+          type="textarea"
+          maxlength="7"
+          placeholder="请输入昵称"
+          show-word-limit />
+
+    </van-popup>
+    <!-- /昵称编辑弹出层 -->
   </div>
 </template>
 
 <script>
-import { getUserProfile, updateUserPhoto } from '@/api/user'
+import { getUserProfile, updateUserPhoto, updateUserProfile } from '@/api/user'
 // import { ImagePreview } from 'vant'
 export default {
   name: 'UserProfile',
   data () {
     return {
-      user: {},
-      isPreviewShow: false,
-      images: []
+      user: {}, // 用户信息
+      isPreviewShow: false, // 头像预览
+      images: [],
+      isEditNameShow: false, // 编辑昵称
+      inputName: '' // 输入昵称
     }
   },
   computed: {
@@ -88,6 +111,29 @@ export default {
         console.log(err)
         this.$toast.fail('上传失败')
       }
+    },
+    async onUpdateUserProfile (field, value) {
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '保存中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      try {
+        await updateUserProfile({
+          [field]: value // 注意属性名使用中括号包裹，否则会当做字符串来使用而不是变量
+        })
+        this.$toast.success('更新成功')
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('更新失败')
+      }
+    },
+    async onUpdateName () {
+      await this.onUpdateUserProfile('name', this.inputName)
+      // 更新昵称
+      this.loadUserProfile()
+      // 关闭弹出层
+      this.isEditNameShow = false
     }
   }
 }
@@ -100,6 +146,13 @@ export default {
   left: 0;
   .van-nav-bar {
     background-color: #000;
+  }
+  }
+/deep/.van-popup {
+    .van-nav-bar {
+      .van-nav-bar__text {
+        color: #fff;
+      }
   }
   }
 

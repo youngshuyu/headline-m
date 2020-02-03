@@ -40,3 +40,10 @@ export const updateUserPhoto = data => request({
   url: '/app/v1_0/user/photo',
   data
 })
+
+// 编辑用户资料
+export const updateUserProfile = data => request({
+  method: 'PATCH',
+  url: '/app/v1_0/user/profile',
+  data
+})
