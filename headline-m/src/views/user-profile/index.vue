@@ -6,7 +6,7 @@
         <van-image round width="30" height="30" :src="user.photo" />
       </van-cell>
       <van-cell title="昵称" :value="user.name" @click="isEditNameShow = true"/>
-      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" />
+      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" @click="isEditGenderShow = true"/>
       <van-cell title="生日" :value="user.birthday" />
     </van-cell-group>
     <input type="file" hidden ref="file" @change="onFileChange" />
@@ -31,7 +31,7 @@
         @click-left="isEditNameShow = false"
         @click-right="onUpdateName"
       />
-      <van-field
+      <div><van-field
           :value="user.name"
           @input="inputName = $event"
           rows="2"
@@ -39,10 +39,18 @@
           type="textarea"
           maxlength="7"
           placeholder="请输入昵称"
-          show-word-limit />
+          show-word-limit /></div>
 
     </van-popup>
     <!-- /昵称编辑弹出层 -->
+    <!-- 性别编辑上拉框 -->
+    <van-action-sheet
+      v-model="isEditGenderShow"
+      :actions="actions"
+      cancel-text="取消"
+      @select="onUpdateGender"
+    />
+    <!-- /性别编辑上拉框 -->
   </div>
 </template>
 
@@ -57,7 +65,12 @@ export default {
       isPreviewShow: false, // 头像预览
       images: [],
       isEditNameShow: false, // 编辑昵称
-      inputName: '' // 输入昵称
+      inputName: '', // 输入昵称
+      isEditGenderShow: false, // 性别编辑
+      actions: [
+        { name: '男', value: 0 },
+        { name: '女', value: 1 }
+      ]
     }
   },
   computed: {
@@ -134,6 +147,13 @@ export default {
       this.loadUserProfile()
       // 关闭弹出层
       this.isEditNameShow = false
+    },
+    async onUpdateGender (item) {
+      await this.onUpdateUserProfile('gender', item.value)
+      // 更新数据(此接口有问题)
+      this.loadUserProfile()
+      // 关闭上拉框
+      this.isEditGenderShow = false
     }
   }
 }
@@ -150,9 +170,7 @@ export default {
   }
 /deep/.van-popup {
     .van-nav-bar {
-      .van-nav-bar__text {
-        color: #fff;
-      }
+      background-color: #fff;
   }
   }
 
