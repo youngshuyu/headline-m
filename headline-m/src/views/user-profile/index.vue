@@ -2,12 +2,12 @@
   <div>
     <van-nav-bar title="个人信息" left-arrow right-text="保存" @click-left="$router.back()" />
     <van-cell-group>
-      <van-cell title="头像" @click="onAvatarChoose">
+      <van-cell title="头像" @click="onAvatarChoose" is-link>
         <van-image round width="30" height="30" :src="user.photo" />
       </van-cell>
-      <van-cell title="昵称" :value="user.name" @click="isEditNameShow = true"/>
-      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" @click="isEditGenderShow = true"/>
-      <van-cell title="生日" :value="user.birthday" />
+      <van-cell title="昵称" :value="user.name" @click="isEditNameShow = true" is-link/>
+      <van-cell title="性别" :value="user.gender === 0 ? '男' : '女'" @click="isEditGenderShow = true" is-link/>
+      <van-cell title="生日" :value="user.birthday" @click="isEditBirthdayShow = true" is-link/>
     </van-cell-group>
     <input type="file" hidden ref="file" @change="onFileChange" />
     <!-- 图片预览 -->
@@ -31,7 +31,8 @@
         @click-left="isEditNameShow = false"
         @click-right="onUpdateName"
       />
-      <div><van-field
+      <div>
+        <van-field
           :value="user.name"
           @input="inputName = $event"
           rows="2"
@@ -39,8 +40,9 @@
           type="textarea"
           maxlength="7"
           placeholder="请输入昵称"
-          show-word-limit /></div>
-
+          show-word-limit
+        />
+      </div>
     </van-popup>
     <!-- /昵称编辑弹出层 -->
     <!-- 性别编辑上拉框 -->
@@ -51,12 +53,22 @@
       @select="onUpdateGender"
     />
     <!-- /性别编辑上拉框 -->
+    <!-- 生日编辑 -->
+    <van-datetime-picker
+        v-if="isEditBirthdayShow"
+        :value="currentDate"
+        type="date" :min-date="minDate"
+        :max-date="maxDate"
+        @cancel="isEditBirthdayShow = false"
+        @confirm="onUpdateBirthday"/>
+    <!-- /生日编辑 -->
   </div>
 </template>
 
 <script>
 import { getUserProfile, updateUserPhoto, updateUserProfile } from '@/api/user'
 // import { ImagePreview } from 'vant'
+import moment from 'moment'
 export default {
   name: 'UserProfile',
   data () {
@@ -70,12 +82,19 @@ export default {
       actions: [
         { name: '男', value: 0 },
         { name: '女', value: 1 }
-      ]
+      ],
+      isEditBirthdayShow: false, // 生日编辑
+      minDate: new Date(1900, 0, 1),
+      maxDate: new Date()
+      // currentDate: new Date()
     }
   },
   computed: {
     file () {
       return this.$refs['file']
+    },
+    currentDate () {
+      return new Date(this.user.birthday)
     }
   },
   created () {
@@ -154,6 +173,15 @@ export default {
       this.loadUserProfile()
       // 关闭上拉框
       this.isEditGenderShow = false
+    },
+    async onUpdateBirthday (value) {
+      const date = moment(value).format('YYYY-MM-DD')
+      // 发送数据
+      await this.onUpdateUserProfile('birthday', date)
+      // 更新数据
+      this.loadUserProfile()
+      // 关闭视图
+      this.isEditBirthdayShow = false
     }
   }
 }
@@ -167,11 +195,10 @@ export default {
   .van-nav-bar {
     background-color: #000;
   }
-  }
+}
 /deep/.van-popup {
-    .van-nav-bar {
-      background-color: #fff;
+  .van-nav-bar {
+    background-color: #fff;
   }
-  }
-
+}
 </style>
