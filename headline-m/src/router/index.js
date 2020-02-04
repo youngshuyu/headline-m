@@ -43,9 +43,15 @@ const routes = [
     component: () => import('@/views/search')
   },
   {
+    name: 'article',
     path: '/article/:articleId',
     component: () => import('@/views/article'),
     props: true // 将动态路由参数映射到组件的props中
+  },
+  {
+    path: '/my-article/:type?',
+    component: () => import('@/views/user-articles'),
+    props: true
   }
 
   // route level code-splitting
