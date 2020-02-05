@@ -3,12 +3,12 @@
     <van-nav-bar title="登录" fixed/>
     <ValidationObserver ref="form">
       <van-cell-group>
-        <ValidationProvider name="手机号" rules="required|mobile" immediate v-slot="{ errors }">
+        <ValidationProvider name="手机号" rules="required|mobile" immediate >
           <van-field v-model="user.mobile" placeholder="请输入手机号">
             <i class="iconfont icon-mobile" slot="left-icon"></i>
           </van-field>
         </ValidationProvider>
-        <ValidationProvider name="短信验证码" rules="required|code" immediate v-slot="{ errors }">
+        <ValidationProvider name="短信验证码" rules="required|code" immediate >
           <van-field v-model="user.code" left-icon="browsing-history-o" placeholder="请输入验证码">
             <i class="iconfont icon-password" slot="left-icon"></i>
             <van-count-down

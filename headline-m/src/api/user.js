@@ -7,7 +7,7 @@ export const login = data => request({
 })
 
 export const getMsgCode = data => request({
-  method: 'GETt',
+  method: 'GET',
   url: `/app/v1_0/sms/codes/${data}`,
   data
 })

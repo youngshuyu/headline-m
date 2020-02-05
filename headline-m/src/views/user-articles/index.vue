@@ -1,13 +1,61 @@
 <template>
-  <div class="userArticlesContainer">333</div>
+  <div class="userArticlesContainer">
+    <van-nav-bar
+      left-arrow
+      @click-left="$router.back()"
+      fixed=""
+    />
+    <van-tabs v-model="active">
+      <van-tab title="我的收藏">
+        <my-collect/>
+      </van-tab>
+      <van-tab title="浏览历史">
+        <my-history/>
+      </van-tab>
+      <van-tab title="我的作品">
+        <my-articles/>
+      </van-tab>
+    </van-tabs>
+  </div>
 </template>
 
 <script>
+import myCollect from './components/collect'
+import myHistory from './components/history'
+import myArticles from './components/articles'
 export default {
-
+  name: 'UserArticles',
+  props: {
+    type: {
+      type: String
+    }
+  },
+  data () {
+    let active = ['collect', 'history'].indexOf(this.type)
+    if (active === -1) {
+      active = 2 // 我的作品
+    }
+    return {
+      active
+    }
+  },
+  components: {
+    myCollect,
+    myHistory,
+    myArticles
+  }
 }
 </script>
 
-<style>
-
+<style lang="less" scoped>
+.userArticlesContainer{
+  padding-top: 90px;
+}
+/deep/.van-tabs__wrap {
+  position: fixed;
+  top: 46px;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
 </style>

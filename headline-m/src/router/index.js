@@ -50,6 +50,7 @@ const routes = [
   },
   {
     path: '/my-article/:type?',
+    name: 'my-article',
     component: () => import('@/views/user-articles'),
     props: true
   }

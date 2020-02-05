@@ -62,3 +62,23 @@ export const deleteFollow = userId => {
     url: `/app/v1_0/user/followings/${userId}`
   })
 }
+// 获取用户收藏
+export const getUserCollect = params => request({
+  method: 'GET',
+  url: '/app/v1_0/article/collections',
+  params
+})
+
+// 获取浏览历史
+export const getBrowserHistory = params => request({
+  method: 'GET',
+  url: '/app/v1_0/user/histories',
+  params
+})
+
+// 获取当前用户文章列表
+export const getCurrentUserArticles = params => request({
+  method: 'GET',
+  url: '/app/v1_0/user/articles',
+  params
+})
