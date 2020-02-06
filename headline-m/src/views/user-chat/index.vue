@@ -1,22 +1,12 @@
 <template>
   <div class="chat-container">
     <!-- 导航栏 -->
-    <van-nav-bar
-      title="小智同学"
-      left-arrow
-      @click-left="$router.back()"
-      fixed
-    />
+    <van-nav-bar title="小智同学" left-arrow @click-left="$router.back()" fixed />
     <!-- /导航栏 -->
 
     <!-- 消息列表 -->
     <div class="message-list" ref="message-list">
-      <div
-        class="message-item"
-        :class="{ reverse: item % 3 === 0 }"
-        v-for="item in 20"
-        :key="item"
-      >
+      <div class="message-item" :class="{ reverse: item % 3 === 0 }" v-for="item in 20" :key="item">
         <van-image
           class="avatar"
           slot="icon"
@@ -34,8 +24,8 @@
 
     <!-- 发送消息 -->
     <van-cell-group class="send-message">
-      <van-field v-model="message" center clearable>
-        <van-button slot="button" size="small" type="primary">发送</van-button>
+      <van-field v-model.trim="message" center clearable>
+        <van-button slot="button" size="small" type="primary" @click="onSendMessage">发送</van-button>
       </van-field>
     </van-cell-group>
     <!-- /发送消息 -->
@@ -43,59 +33,90 @@
 </template>
 
 <script>
+import io from 'socket.io-client'
 export default {
   data () {
     return {
-      message: ''
+      message: '',
+      socket: null
     }
   },
+  created () {
+    // 建立链接
+    const socket = io('http://ttapi.research.itcast.cn')
 
+    // 把 socket 存储到 data 中，然后就可以在 methods 中访问到了
+    this.socket = socket
+
+    // 当客户端与服务器建立连接成功，触发 connect 事件
+    socket.on('connect', () => {
+      console.log('建立连接成功！')
+    })
+
+    // 监听接收服务端消息
+    socket.on('message', data => {
+      console.log('收到服务器消息：', data)
+    })
+  },
   mounted () {
     window.list = this.$refs['message-list']
+  },
+  methods: {
+    onSendMessage () {
+      const message = this.message
+      if (!message) {
+        return
+      }
+      // 发送消息
+      this.socket.emit('message', {
+        msg: message,
+        timestamp: Date.now()
+      })
+    }
   }
 }
 </script>
 
 <style scoped lang="less">
-  .chat-container {
-    position: absolute;
-    width: 100%;
+.chat-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  padding: 46px 0 50px 0;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  background: #f5f5f6;
+  .message-list {
     height: 100%;
-    padding: 46px 0 50px 0;
-    top: 0;
-    left: 0;
-    box-sizing: border-box;
-    background: #f5f5f6;
-    .message-list {
-      height: 100%;
-      overflow-y: scroll;
-      .message-item {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        .title {
-          background: #fff;
-          padding: 5px;
-          border-radius: 6px;
-        }
-        .avatar {
-          margin-right: 5px;
-        }
+    overflow-y: scroll;
+    .message-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      .title {
+        background: #fff;
+        padding: 5px;
+        border-radius: 6px;
       }
-      .reverse {
-        flex-direction: row-reverse;
-        .title {
-          margin-right: 5px;
-        }
+      .avatar {
+        margin-right: 5px;
       }
     }
-
-    .send-message {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #f5f5f6 !important;
+    .reverse {
+      flex-direction: row-reverse;
+      .title {
+        margin-right: 5px;
+      }
     }
   }
+
+  .send-message {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #f5f5f6 !important;
+  }
+}
 </style>
