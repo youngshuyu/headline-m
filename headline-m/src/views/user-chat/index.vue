@@ -16,7 +16,7 @@
           :src="item.photo"
         />
         <div class="title">
-          <span>{{ `${item.message}` }}</span>
+          <span >{{ item.message }}</span>
         </div>
       </div>
     </div>
@@ -34,6 +34,7 @@
 
 <script>
 import io from 'socket.io-client'
+import { getItem, setItem } from '@/utils/storage'
 export default {
   name: 'userChat',
   data () {
@@ -41,7 +42,12 @@ export default {
       message: '',
       socket: null,
       // [ { message: '消息数据', isMe: true, photo: '头像' }, ]
-      messages: [] // 存储所有的消息列表
+      messages: getItem('chat-messages') || []// 存储所有的消息列表
+    }
+  },
+  watch: {
+    messages (newValue) {
+      setItem('chat-messages', newValue)
     }
   },
   created () {
@@ -80,11 +86,14 @@ export default {
         msg: message,
         timestamp: Date.now()
       })
+      // 放进消息列表
       this.messages.push({
         message,
         isMe: true,
         photo: 'https://img.yzcdn.cn/vant/cat.jpeg'
       })
+      // 情况输入框
+      this.message = ''
     }
   }
 }
@@ -92,44 +101,46 @@ export default {
 
 <style scoped lang="less">
 .chat-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  padding: 46px 0 50px 0;
-  top: 0;
-  left: 0;
-  box-sizing: border-box;
-  background: #f5f5f6;
-  .message-list {
+    position: absolute;
+    width: 100%;
     height: 100%;
-    overflow-y: scroll;
-    .message-item {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      .title {
-        background: #fff;
-        padding: 5px;
-        border-radius: 6px;
-      }
-      .avatar {
-        margin-right: 5px;
-      }
-    }
-    .reverse {
-      flex-direction: row-reverse;
-      .title {
-        margin-right: 5px;
-      }
-    }
-  }
-
-  .send-message {
-    position: fixed;
-    bottom: 0;
+    padding: 46px 0 50px 0;
+    top: 0;
     left: 0;
-    right: 0;
-    background: #f5f5f6 !important;
+    box-sizing: border-box;
+    background: #f5f5f6;
+    .message-list {
+      height: 100%;
+      overflow-y: scroll;
+      .message-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        .title {
+          background: #fff;
+          padding: 5px;
+          border-radius: 6px;
+          font-size: 16px;
+          max-width: 76%;
+        }
+        .avatar {
+          margin-right: 5px;
+        }
+      }
+      .reverse {
+        flex-direction: row-reverse;
+        .title {
+          margin-right: 5px;
+        }
+      }
+    }
+
+    .send-message {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #f5f5f6 !important;
+    }
   }
-}
 </style>
