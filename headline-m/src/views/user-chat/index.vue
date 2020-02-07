@@ -46,8 +46,13 @@ export default {
     }
   },
   watch: {
+    // 消息列表改变时自动储存并跳到底部
     messages (newValue) {
       setItem('chat-messages', newValue)
+      // 要想改变数据后立即操作dom，需要用到this.$nextTick
+      this.$nextTick(() => {
+        this.toBottom()
+      })
     }
   },
   created () {
@@ -94,6 +99,10 @@ export default {
       })
       // 情况输入框
       this.message = ''
+    },
+    toBottom () {
+      const messageList = this.$refs['message-list']
+      messageList.scrollTop = messageList.scrollHeight
     }
   }
 }
