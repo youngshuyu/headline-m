@@ -6,17 +6,17 @@
 
     <!-- 消息列表 -->
     <div class="message-list" ref="message-list">
-      <div class="message-item" :class="{ reverse: item % 3 === 0 }" v-for="item in 20" :key="item">
+      <div class="message-item" :class="{ reverse: item.isMe }" v-for="(item,index) in messages" :key="index">
         <van-image
           class="avatar"
           slot="icon"
           round
           width="30"
           height="30"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="item.photo"
         />
         <div class="title">
-          <span>{{ `hello${item}` }}</span>
+          <span>{{ `${item.message}` }}</span>
         </div>
       </div>
     </div>
@@ -35,10 +35,13 @@
 <script>
 import io from 'socket.io-client'
 export default {
+  name: 'userChat',
   data () {
     return {
       message: '',
-      socket: null
+      socket: null,
+      // [ { message: '消息数据', isMe: true, photo: '头像' }, ]
+      messages: [] // 存储所有的消息列表
     }
   },
   created () {
@@ -56,6 +59,11 @@ export default {
     // 监听接收服务端消息
     socket.on('message', data => {
       console.log('收到服务器消息：', data)
+      this.messages.push({
+        message: data.msg,
+        isMe: false,
+        photo: 'http://toutiao.meiduo.site/FkBUsGwtrHKjoF0NPLzeilckol1-'
+      })
     })
   },
   mounted () {
@@ -71,6 +79,11 @@ export default {
       this.socket.emit('message', {
         msg: message,
         timestamp: Date.now()
+      })
+      this.messages.push({
+        message,
+        isMe: true,
+        photo: 'https://img.yzcdn.cn/vant/cat.jpeg'
       })
     }
   }
