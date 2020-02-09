@@ -163,14 +163,14 @@ export default {
     async onUpdateName () {
       await this.onUpdateUserProfile('name', this.inputName)
       // 更新昵称
-      this.loadUserProfile()
+      this.user.name = this.inputName
       // 关闭弹出层
       this.isEditNameShow = false
     },
     async onUpdateGender (item) {
       await this.onUpdateUserProfile('gender', item.value)
       // 更新数据(此接口有问题)
-      this.loadUserProfile()
+      this.user.gender = item.value
       // 关闭上拉框
       this.isEditGenderShow = false
     },
@@ -179,7 +179,7 @@ export default {
       // 发送数据
       await this.onUpdateUserProfile('birthday', date)
       // 更新数据
-      this.loadUserProfile()
+      this.user.birthday = date
       // 关闭视图
       this.isEditBirthdayShow = false
     }

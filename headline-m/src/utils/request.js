@@ -75,7 +75,7 @@ request.interceptors.response.use(
         return request(error.config)
       } catch (err) {
         // 获取token失败，跳到登录页面
-        console.log(err)
+        console.log('获取token失败', err)
         redirectLogin()
       }
     }
@@ -85,8 +85,7 @@ request.interceptors.response.use(
 function redirectLogin () {
   router.push({
     name: 'login', // router.currentRoute 当前路由对象，和你在组件中访问的 this.$route 是同一个东西
-    // query 参数的数据格式就是：?key=value&key=value
-    query: {
+    query: {// query 参数的数据格式就是：?key=value&key=value
       redirect: router.currentRoute.fullPath
     }
   })
