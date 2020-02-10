@@ -8,7 +8,8 @@ Vue.use(Vuex)
 const USER_KEY = 'user'
 export default new Vuex.Store({
   state: {
-    user: getItem(USER_KEY)
+    user: getItem(USER_KEY),
+    cachePages: ['TabBar']// 缓存组件
   },
   mutations: {
     setUser (state, data) {
@@ -21,6 +22,19 @@ export default new Vuex.Store({
 
       // 为了防止刷新丢失 state 中的 user 状态，我们把它放到本地存储
       setItem('user', state.user)
+    },
+    // 添加组件缓存
+    addCachePage (state, name) {
+      if (!state.cachePages.includes(name)) {
+        state.cachePages.push(name)
+      }
+    },
+    // 删除缓存组件
+    removeCachePage (state, name) {
+      let index = state.cachePages.indexOf(name)
+      if (index !== -1) {
+        state.cachePages.splice(index)
+      }
     }
 
   },

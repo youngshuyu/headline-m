@@ -43,6 +43,16 @@ export default {
     myCollect,
     myHistory,
     myArticles
+  },
+  beforeRouteLeave (to, from, next) {
+    // 如果跳转的是文章详情页，缓存此组件
+    if (to.name === 'article') {
+      this.$store.commit('addCachePage', 'UserArticles')
+    } else {
+      // 如果跳转的是其他页面页，取消缓存此组件
+      this.$store.commit('removeCachePage', 'UserArticles')
+    }
+    next()
   }
 }
 </script>
