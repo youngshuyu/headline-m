@@ -76,7 +76,7 @@
       <van-icon
         class="comment-icon"
         name="comment-o"
-        :info="total_count > 99 ? 99 : total_count"
+        :info="total_count > 99 ? '99+' : total_count"
       />
       <van-icon
         :color="articleContent.is_collected ? 'orange':'grey' "
@@ -228,45 +228,23 @@ export default {
         forbidClick: true // 是否禁止背景点击
       })
       // 发送数据
-      // try {
-      //   const { data } = await addComment({
-      //     target: this.articleId,
-      //     content: inputComment
-      //   // art_id // 文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
-      //   })
-      //   // 清空文本框
-      //   this.inputComment = ''
-      //   // 关闭弹层
-      //   this.isPostCommentShow = false
-      //   // 新增评论放到最上面
-      //   // console.log(this.$refs['article_comment'].list)
-      //   this.$refs['article_comment'].list.unshift(data.data.new_obj)
-      //   // this.$refs['article_comment'].list &&
-      //   this.$toast.success('发布成功')
-      // } catch (error) {
-      //   console.log(error)
-      //   this.$toast.fail('发表评论失败')
-      // }
       try {
         const { data } = await addComment({
           target: this.articleId,
-          content: this.inputComment
+          content: inputComment
+        // art_id // 文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
         })
         // 清空文本框
-        this.postMessage = ''
+        this.inputComment = ''
         // 关闭弹层
-        this.isPostShow = false
-        // 将数据添加到列表顶部
-        console.log(data)
-
-        console.log(this.$refs['article-comment'].list)
-
-        // this.$refs['article-comment'].list.unshift(data.data.new_obj)
-
+        this.isPostCommentShow = false
+        // 新增评论放到最上面
+        this.$refs['article-comment'].articleComment.list && this.$refs['article-comment'].articleComment.list.unshift(data.data.new_obj)
+        this.total_count++
         this.$toast.success('发布成功')
-      } catch (err) {
-        console.log(err)
-        this.$toast.fail('发布失败')
+      } catch (error) {
+        console.log(error)
+        this.$toast.fail('发表评论失败')
       }
     },
     getTotal_count (value) {
