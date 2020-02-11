@@ -63,7 +63,6 @@ export default {
       }
     }
   },
-
   methods: {
     async onLoad () {
       // 异步更新数据
@@ -74,13 +73,13 @@ export default {
         limit: 10 // 每页大小
       })
       // 结束loading
+
       this.articleComment.loading = false
-      console.log(data, 1)
       const { results } = data.data
-      console.log(results)
       this.articleComment.list.push(...results)
       // 更新总数据条数
       this.articleComment.totalCount = data.data.total_count
+      this.$emit('totalCount', this.articleComment.totalCount)
 
       // 4. 判断是否还有数据
       if (results.length) {

@@ -44,7 +44,8 @@
         v-if="!user || articleContent.aut_id !== user.id"
         @click="onFollow">{{articleContent.is_followed ? '已关注':'+ 关注'}}</van-button>
       </div>
-      <div class="markdown-body" v-html="articleContent.content"></div>
+      <div class="markdown-body" v-html="articleContent.content" style="margin-bottom:50px"></div>
+      <p style="text-align:center;font-size:14px;color:#ccc;">------------  正文结束  ------------</p>
     </div>
     <!-- /文章详情 -->
 
@@ -60,7 +61,8 @@
     </div>
     <!-- /加载失败提示 -->
     <!-- 文章评论 -->
-    <article-comment :articleId="articleId"/>
+    <article-comment ref="article-comment" :articleId="articleId"  @totalCount="getTotal_count"/>
+
     <!-- /文章评论 -->
     <!-- 底部区域 -->
     <div class="footer">
@@ -69,11 +71,12 @@
         type="default"
         round
         size="small"
+        @click="isPostCommentShow = true"
       >写评论</van-button>
       <van-icon
         class="comment-icon"
         name="comment-o"
-        info="9"
+        :info="total_count > 99 ? 99 : total_count"
       />
       <van-icon
         :color="articleContent.is_collected ? 'orange':'grey' "
@@ -88,16 +91,29 @@
       <van-icon class="share-icon" name="share" />
     </div>
     <!-- /底部区域 -->
+    <!-- 写评论 -->
+    <van-popup
+      v-model="isPostCommentShow"
+      position="bottom"
+    >
+    <!-- 在组件上使用v-model相当于
+        :value="inputComment"
+        @input="inputComment = 事件参数" -->
+      <post-comment v-model="inputComment" @click-post="onPostComment"/>
+    </van-popup>
+    <!-- /写评论 -->
   </div>
 </template>
-
+<!--  -->
 <script>
 import { getArticleByArticleId, addCollect, deleteCollect, addLike, deleteLike, addFollow, deleteFollow } from '@/api/article.js'
 import { mapState } from 'vuex'
 import ArticleComment from './components/article_comment'
+import PostComment from './components/post-comment'
+import { addComment } from '@/api/comment'
 export default {
   name: 'ArticlePage',
-  components: { ArticleComment },
+  components: { ArticleComment, PostComment },
   props: {
     articleId: {
       type: String,
@@ -109,7 +125,10 @@ export default {
       articleContent: {},
       loading: false,
       netError: false,
-      isCollect: false
+      isCollect: false,
+      isPostCommentShow: false, // 写评论弹出层
+      inputComment: '',
+      total_count: 0
     }
   },
   computed: {
@@ -178,7 +197,7 @@ export default {
     async onFollow () {
       this.$toast.loading({
         duration: 0, // 持续展示 toast
-        message: '操作中...',
+        message: '发布中...',
         forbidClick: true // 是否禁止背景点击
       })
       try {
@@ -195,6 +214,63 @@ export default {
         console.log(err)
         this.$toast.fail('操作失败')
       }
+    },
+    async onPostComment () {
+      let inputComment = this.inputComment.trim()
+      // 非空校验
+      if (!inputComment.length) {
+        this.$toast('请输入评论内容')
+        return
+      }
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '操作中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      // 发送数据
+      // try {
+      //   const { data } = await addComment({
+      //     target: this.articleId,
+      //     content: inputComment
+      //   // art_id // 文章id，对评论内容发表回复时，需要传递此参数，表明所属文章id。对文章进行评论，不要传此参数。
+      //   })
+      //   // 清空文本框
+      //   this.inputComment = ''
+      //   // 关闭弹层
+      //   this.isPostCommentShow = false
+      //   // 新增评论放到最上面
+      //   // console.log(this.$refs['article_comment'].list)
+      //   this.$refs['article_comment'].list.unshift(data.data.new_obj)
+      //   // this.$refs['article_comment'].list &&
+      //   this.$toast.success('发布成功')
+      // } catch (error) {
+      //   console.log(error)
+      //   this.$toast.fail('发表评论失败')
+      // }
+      try {
+        const { data } = await addComment({
+          target: this.articleId,
+          content: this.inputComment
+        })
+        // 清空文本框
+        this.postMessage = ''
+        // 关闭弹层
+        this.isPostShow = false
+        // 将数据添加到列表顶部
+        console.log(data)
+
+        console.log(this.$refs['article-comment'].list)
+
+        // this.$refs['article-comment'].list.unshift(data.data.new_obj)
+
+        this.$toast.success('发布成功')
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('发布失败')
+      }
+    },
+    getTotal_count (value) {
+      this.total_count = value
     }
   }
 }
@@ -211,6 +287,7 @@ export default {
     text-align: center;
   }
   .detail {
+    margin-bottom: 30px;
     .title {
       margin: 0;
       padding-top: 24px;

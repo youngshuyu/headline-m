@@ -20,7 +20,7 @@
 
       <p>
         <!-- 评论发布日期 -->
-        <span style="margin-right: 10px;">{{ comment.pubdate }}</span>
+        <span style="margin-right: 10px;">{{ comment.pubdate | relativeTime}}</span>
         <!-- 评论发布日期 -->
 
         <van-button
