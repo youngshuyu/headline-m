@@ -61,7 +61,7 @@
     </div>
     <!-- /加载失败提示 -->
     <!-- 文章评论 -->
-    <article-comment ref="article-comment" :articleId="articleId"  @totalCount="getTotal_count"/>
+    <article-comment ref="article-comment" :articleId="articleId"  @totalCount="getTotal_count" @click-reply="onReply" />
 
     <!-- /文章评论 -->
     <!-- 底部区域 -->
@@ -102,6 +102,14 @@
       <post-comment v-model="inputComment" @click-post="onPostComment"/>
     </van-popup>
     <!-- /写评论 -->
+    <!-- 回复评论 -->
+      <van-popup
+        v-model="isReplyCommentShow"
+        position="bottom"
+      >
+      <reply-comment :currentComment="currentComment" :articleId="articleId" @click-close="isReplyCommentShow = false"/>
+      </van-popup>
+    <!-- /回复评论 -->
   </div>
 </template>
 <!--  -->
@@ -111,9 +119,10 @@ import { mapState } from 'vuex'
 import ArticleComment from './components/article_comment'
 import PostComment from './components/post-comment'
 import { addComment } from '@/api/comment'
+import ReplyComment from './components/reply-comment'
 export default {
   name: 'ArticlePage',
-  components: { ArticleComment, PostComment },
+  components: { ArticleComment, PostComment, ReplyComment },
   props: {
     articleId: {
       type: String,
@@ -128,7 +137,9 @@ export default {
       isCollect: false,
       isPostCommentShow: false, // 写评论弹出层
       inputComment: '',
-      total_count: 0
+      total_count: 0,
+      isReplyCommentShow: false, // 回复评论弹层
+      currentComment: {} // 当前评论项
     }
   },
   computed: {
@@ -249,6 +260,11 @@ export default {
     },
     getTotal_count (value) {
       this.total_count = value
+    },
+    onReply (comment) {
+      // 打开弹层
+      this.isReplyCommentShow = true
+      this.currentComment = comment
     }
   }
 }

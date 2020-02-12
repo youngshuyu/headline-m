@@ -7,7 +7,7 @@
       finished-text="没有更多了"
       @load="onLoad"
     >
-    <comment-item v-for="(item,index) in articleComment.list"  :key="index" :comment="item"/>
+    <comment-item v-for="(item,index) in articleComment.list"  :key="index" :comment="item" @click-reply="$emit('click-reply', $event)"/>
       <!-- <van-cell v-for="item in articleComment.list" :key="item.com_id.toString()" :title="item">
         <van-image
           slot="icon"
