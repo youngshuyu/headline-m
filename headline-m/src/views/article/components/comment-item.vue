@@ -34,6 +34,7 @@
       <van-icon
         :color="comment.is_liking ? '#e5645f' : ''"
         :name="comment.is_liking ? 'good-job' : 'good-job-o'"
+        @click="onCommentLike(comment)"
       />
       <span>{{ comment.like_count ? comment.like_count : '赞' }}</span>
     </div>
@@ -41,6 +42,7 @@
 </template>
 
 <script>
+import { deleteCommentLike, addCommentLike } from '@/api/comment'
 export default {
   name: 'CommentItem',
   components: {},
@@ -57,7 +59,24 @@ export default {
   watch: {
   },
   created () {},
-  methods: {}
+  methods: {
+    async onCommentLike (comment) {
+      // 如果已经赞了则取消点赞
+      if (comment.is_liking) {
+        await deleteCommentLike(comment.com_id)
+        // this.$emit('deleteCommentLike', comment.com_id)
+      } else {
+        // 如果没有赞，则点赞
+        await addCommentLike(comment.com_id)
+        // this.$emit('addCommentLike', comment.com_id)
+      }
+
+      // 更新视图状态
+      comment.is_liking = !comment.is_liking
+      this.$toast('操作成功')
+    }
+
+  }
 }
 </script>
 

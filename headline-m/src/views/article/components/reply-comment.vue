@@ -48,6 +48,7 @@
       >写评论</van-button>
       <van-icon
         name="good-job"
+        @click="onLike"
       />
     </div>
     <!-- /底部 -->
@@ -134,7 +135,8 @@ export default {
         console.log(error)
         this.$toast.fail('发表评论失败')
       }
-    }
+    },
+    onLike () {}
   }
 }
 </script>

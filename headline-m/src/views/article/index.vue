@@ -107,7 +107,7 @@
         v-model="isReplyCommentShow"
         position="bottom"
       >
-      <reply-comment :currentComment="currentComment" :articleId="articleId" @click-close="isReplyCommentShow = false"/>
+      <reply-comment :currentComment="currentComment" :articleId="articleId" @click-close="isReplyCommentShow = false" v-if="isReplyCommentShow"/>
       </van-popup>
     <!-- /回复评论 -->
   </div>
