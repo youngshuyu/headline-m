@@ -9,7 +9,7 @@
         shape="round"
         background="#3296fa"
         @search="onSearch(searchContent)"
-        @cancel="onCancel"
+        @cancel="$router.back()"
         @focus="isResultShow = false"
         @input="onSearchInput"
       />
